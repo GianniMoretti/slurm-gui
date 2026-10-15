@@ -74,17 +74,24 @@ class NodeMap(QWidget):
 
             p.setFont(name_font)
             p.setPen(QColor(theme.TEXT))
-            p.drawText(r.adjusted(10, 7, -10, 0), Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop, node.name)
+            inner = int(r.width() - 20)
+            name = p.fontMetrics().elidedText(node.name, Qt.TextElideMode.ElideRight, inner)
+            p.drawText(r.adjusted(10, 7, -10, 0), Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop, name)
             p.setFont(small)
             p.setPen(color)
             state = node.state.lower() + ("+" + "+".join(f.lower() for f in node.flags) if node.flags else "")
+            state = p.fontMetrics().elidedText(state, Qt.TextElideMode.ElideRight, inner)
             p.drawText(r.adjusted(10, 25, -10, 0), Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop, state)
 
             # GPUs: one cell each.
             if node.gpus_total:
-                cell, gap = 12.0, 4.0
-                x0, y0 = r.left() + 10, r.top() + 46
-                fits = int((r.width() - 20 + gap) // (cell + gap))
+                count = f"{node.gpus_alloc}/{node.gpus_total}"
+                room = r.width() - 20 - p.fontMetrics().horizontalAdvance(count) - 8   # keep the counter clear
+                gap = 4.0
+                cell = min(12.0, (room + gap) / node.gpus_total - gap)    # shrink cells for many GPUs
+                x0, y0 = r.left() + 10, r.top() + 46 + (12 - max(cell, 4)) / 2
+                fits = int((room + gap) // (max(cell, 4) + gap))
+                cell = max(cell, 4)
                 for g in range(min(node.gpus_total, fits)):
                     cr = QRectF(x0 + g * (cell + gap), y0, cell, cell)
                     used = g < node.gpus_alloc
@@ -92,8 +99,7 @@ class NodeMap(QWidget):
                     p.setBrush(QColor(theme.BLUE) if used else Qt.BrushStyle.NoBrush)
                     p.drawRoundedRect(cr, 3, 3)
                 p.setPen(QColor(theme.TEXT_MUTED))
-                p.drawText(r.adjusted(10, 44, -10, 0), Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop,
-                           f"{node.gpus_alloc}/{node.gpus_total}")
+                p.drawText(r.adjusted(10, 44, -10, 0), Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignTop, count)
             # CPU bar.
             if node.cpus_total:
                 bar = QRectF(r.left() + 10, r.bottom() - 13, r.width() - 20, 4)

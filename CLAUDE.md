@@ -17,5 +17,10 @@
 - **Testing against the real cluster:** only read-only commands (squeue, sinfo, sacct, scontrol show,
   sacctmgr show, sshare). Never submit, cancel or modify jobs without the user asking. Run the GUI with
   `QT_QPA_PLATFORM=offscreen` and a temporary `XDG_CONFIG_HOME` so the user's profiles are not touched.
-- **Fixtures:** only `tests/fixtures/example` (a synthetic cluster) is committed; the repo is public. Fixtures
-  captured from real clusters stay local (gitignored) because they describe a real site and its users.
+- **Test data / demo:** the synthetic cluster in `src/slurm_gui/demo/data/` is both the parser fixtures and
+  `slurm-gui --demo`. The repo is public: data captured from real clusters stays local in `tests/fixtures/`
+  (gitignored) because it describes a real site and its users. Screenshots come only from the demo
+  (`scripts/screenshots.py`).
+- **Releases:** Linux x86_64 (AppImage + tar.gz) and macOS Apple Silicon (.dmg) only, unsigned, built by
+  `.github/workflows/release.yml` on a `vX.Y.Z` tag via `packaging/build.py`. No Windows, no Intel Mac, no PyPI
+  (user decision): those users run from source.

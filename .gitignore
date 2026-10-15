@@ -4,7 +4,5 @@ __pycache__/
 build/
 dist/
 .pytest_cache/
-# Only the synthetic example cluster is published. Fixtures captured from real clusters
-# stay local (tests still run on them when present).
-tests/fixtures/*
-!tests/fixtures/example/
+# Outputs captured from real clusters stay local: they describe a real site and its users.
+tests/fixtures/

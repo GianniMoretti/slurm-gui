@@ -17,6 +17,7 @@ from PyQt6.QtCore import QObject, QTimer, pyqtSignal
 from ..config.profiles import MIN_REFRESH_SECONDS, Profile
 from ..core.async_bridge import AsyncBridge
 from ..core.ssh import SshError, SshSession
+from ..demo import DEMO_HOST, DemoSession
 from ..slurm.client import SlurmClient
 from ..slurm.models import Association, ClusterInfo, Job, Node, Partition
 
@@ -86,8 +87,11 @@ class ClusterState(QObject):
         self.disconnect()
         gen = self._generation
         self.profile = profile
-        self.session = session = SshSession(profile.host, profile.user, profile.port, profile.key_file,
-                                            profile.login_shell)
+        if profile.host == DEMO_HOST:
+            session = DemoSession()
+        else:
+            session = SshSession(profile.host, profile.user, profile.port, profile.key_file, profile.login_shell)
+        self.session = session
         self.client = client = SlurmClient(session)
         self._first_snapshot = False
         self.stage.emit(f"Connecting to {profile.host}…")

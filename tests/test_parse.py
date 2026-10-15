@@ -5,12 +5,18 @@ import pytest
 from slurm_gui.slurm import parse as p
 from slurm_gui.slurm.reasons import explain_reason
 
-FIX = Path(__file__).parent / "fixtures"
-CLUSTERS = sorted(d.name for d in FIX.iterdir() if d.is_dir())
+from slurm_gui.demo import DATA as EXAMPLE
+
+# "example" is the synthetic cluster shipped with the app (also used by --demo). Outputs captured
+# from real clusters can be added locally under tests/fixtures/<name>/ (gitignored).
+LOCAL = Path(__file__).parent / "fixtures"
+FOLDERS = {"example": EXAMPLE} | (
+    {d.name: d for d in LOCAL.iterdir() if d.is_dir()} if LOCAL.is_dir() else {})
+CLUSTERS = sorted(FOLDERS)
 
 
 def read(cluster: str, name: str) -> str:
-    return (FIX / cluster / name).read_text()
+    return (FOLDERS[cluster] / name).read_text()
 
 
 @pytest.mark.parametrize(

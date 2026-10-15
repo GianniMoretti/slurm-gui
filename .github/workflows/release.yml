@@ -1,0 +1,114 @@
+# Builds SLURM GUI for Linux (x86_64) and macOS (Apple Silicon).
+#  - push a tag "vX.Y.Z" (matching the version in pyproject.toml) -> test, build, publish a GitHub Release
+#  - run it by hand (Actions tab -> Release -> Run workflow)       -> test and build only; files are
+#    kept as workflow artifacts for a few days, nothing is published
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  PYTHON_VERSION: "3.12"
+  # Qt's runtime needs these on Ubuntu; the xcb ones are also bundled into the Linux build.
+  QT_APT_DEPS: >-
+    libegl1 libgl1 libfontconfig1 libdbus-1-3 libglib2.0-0 libxkbcommon0 libxkbcommon-x11-0
+    libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0
+    libxcb-shape0 libxcb-xinerama0 libxcb-xkb1 libxcb-xfixes0
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Check that the tag matches pyproject.toml
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          version=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match the version in pyproject.toml ($version)"
+            exit 1
+          fi
+      - run: sudo apt-get update && sudo apt-get install -y $QT_APT_DEPS
+      - run: pip install -e '.[dev]'
+      - run: pytest -q
+        env:
+          QT_QPA_PLATFORM: offscreen
+
+  build:
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04   # the oldest supported Ubuntu, so the build runs on older distros too
+          - os: macos-14       # Apple Silicon (arm64)
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Linux build dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update && sudo apt-get install -y $QT_APT_DEPS
+          curl -sSL -o appimagetool https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage
+          chmod +x appimagetool
+      - run: pip install -e '.[build]'
+      - name: Build
+        run: python packaging/build.py ${{ runner.os == 'Linux' && '--appimagetool ./appimagetool' || '' }}
+      - name: Smoke test (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          set +e
+          APPIMAGE_EXTRACT_AND_RUN=1 QT_QPA_PLATFORM=offscreen timeout 15 dist/release/*.AppImage --demo
+          code=$?
+          [ $code -eq 124 ] || { echo "::error::the app exited early with code $code"; exit 1; }
+      - name: Smoke test (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          QT_QPA_PLATFORM=offscreen "dist/SLURM GUI.app/Contents/MacOS/SLURM GUI" --demo &
+          pid=$!
+          sleep 15
+          if kill -0 $pid 2>/dev/null; then kill $pid; else wait $pid; echo "::error::the app exited early with code $?"; exit 1; fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ matrix.os }}
+          path: dist/release/*
+          retention-days: 7
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: files
+          merge-multiple: true
+      - name: Publish the GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cat > notes.md <<'EOF'
+          ## Downloads
+
+          | System | File |
+          |---|---|
+          | Linux (x86_64) | `.AppImage` (one file: make it executable and run it) or `.tar.gz` |
+          | macOS (Apple Silicon) | `.dmg` (drag the app to Applications) |
+
+          The builds are **not code-signed**. On macOS the first launch needs right-click → Open (or the
+          `xattr` command in the README). Intel Macs and Windows: run it from source, see the README.
+          EOF
+          gh release create "$GITHUB_REF_NAME" files/* --title "SLURM GUI $GITHUB_REF_NAME" \
+            --notes-file notes.md

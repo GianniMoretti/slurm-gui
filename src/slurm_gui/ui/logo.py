@@ -7,6 +7,7 @@ from pathlib import Path
 from PyQt6.QtCore import QRectF, Qt
 from PyQt6.QtGui import QColor, QFont, QIcon, QPainter, QPixmap
 
+from .. import __version__
 from . import theme
 
 ASSETS = Path(__file__).resolve().parent.parent / "assets"
@@ -74,5 +75,7 @@ def splash_pixmap(width: int = 560, height: int = 340) -> QPixmap:
     p.setFont(sub)
     p.setPen(QColor(theme.TEXT_MUTED))
     p.drawText(QRectF(0, 236, width, 24), Qt.AlignmentFlag.AlignHCenter, "Your SLURM jobs, at a glance")
+    p.setPen(QColor(theme.TEXT_DIM))
+    p.drawText(QRectF(0, height - 40, width, 24), Qt.AlignmentFlag.AlignHCenter, f"v{__version__}")
     p.end()
     return pix

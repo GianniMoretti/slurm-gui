@@ -9,10 +9,11 @@ description = "Cross-platform desktop GUI to monitor and control any SLURM clust
 requires-python = ">=3.11"
 license = "MIT"
 license-files = ["LICENSE"]
-dependencies = ["PyQt6>=6.6", "asyncssh>=2.14", "pyqtgraph>=0.13"]
+dependencies = ["PyQt6>=6.6", "asyncssh>=2.14"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]
+build = ["pyinstaller>=6.10"]
 
 [project.gui-scripts]
 slurm-gui = "slurm_gui.app:main"
@@ -21,7 +22,7 @@ slurm-gui = "slurm_gui.app:main"
 where = ["src"]
 
 [tool.setuptools.package-data]
-slurm_gui = ["assets/*"]
+slurm_gui = ["assets/*", "demo/data/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

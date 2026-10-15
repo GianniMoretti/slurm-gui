@@ -55,7 +55,13 @@ def main() -> int:
         window.show()
         splash.finish(window)
 
-    QTimer.singleShot(SPLASH_MS, show_main)
+    def start() -> None:
+        show_main()
+        if "--demo" in sys.argv:
+            from .demo import DEMO_PROFILE
+            window.connect_to(DEMO_PROFILE)
+
+    QTimer.singleShot(SPLASH_MS, start)
     code = app.exec()
     bridge.shutdown()
     return code

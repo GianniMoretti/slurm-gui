@@ -12,6 +12,7 @@ from PyQt6.QtWidgets import (
     QPushButton, QScrollArea, QSpinBox, QStackedWidget, QVBoxLayout, QWidget,
 )
 
+from .. import __version__
 from ..config.profiles import MIN_REFRESH_SECONDS, Profile, load_profiles, save_profiles, ssh_config_hosts
 from ..config.settings import config_dir
 from . import theme
@@ -267,7 +268,7 @@ class WelcomePage(QWidget):
         lay.addStretch()
 
         shown = str(config_dir()).replace(str(Path.home()), "~", 1)
-        folder = QPushButton(f"Settings folder: {shown}", objectName="Link")
+        folder = QPushButton(f"v{__version__}  ·  Settings folder: {shown}", objectName="Link")
         folder.setToolTip("Open the folder with your saved connections and settings")
         folder.setCursor(Qt.CursorShape.PointingHandCursor)
         folder.clicked.connect(lambda: QDesktopServices.openUrl(QUrl.fromLocalFile(str(config_dir()))))

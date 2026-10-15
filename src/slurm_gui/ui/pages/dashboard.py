@@ -166,6 +166,9 @@ class DashboardPage(QWidget):
                 free[kind] += n.gpus_free
         if not total:
             self.free_box.addWidget(label("No GPU nodes found", "Muted"))
+        total = {k: v for k, v in total.items() if v}   # types only on down/drained nodes are not usable
+        if not total:
+            self.free_box.addWidget(label("No GPUs available right now", "Muted"))
         for kind in sorted(total, key=lambda k: (-free[k], k)):
             row = QGridLayout()
             row.addWidget(label(kind), 0, 0)
