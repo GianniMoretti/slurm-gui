@@ -1,0 +1,14 @@
+Configuration data as of 2026-01-15T10:00:00
+AccountingStorageEnforce = associations,limits,qos
+ClusterName             = example
+DefMemPerNode           = UNLIMITED
+MaxArraySize            = 1001
+MaxJobCount             = 10000
+PriorityDecayHalfLife   = 7-00:00:00
+PriorityType            = priority/multifactor
+PriorityWeightAge       = 1000
+PriorityWeightFairShare = 10000
+PriorityWeightJobSize   = 0
+SchedulerType           = sched/backfill
+SelectType              = select/cons_tres
+SlurmctldHost[0]        = controller

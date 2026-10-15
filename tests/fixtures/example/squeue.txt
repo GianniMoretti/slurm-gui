@@ -1,0 +1,12 @@
+5001|5001|N/A|alice|research|gpu|normal|RUNNING|None|5:12:40|1-00:00:00|1|16|128G|gres/gpu:a100:2|gpu01|2026-01-15T04:40:00|2026-01-15T04:47:20|5120|/home/alice/projects/vit|train-vit-base
+5002|5002|N/A|alice|research|gpu|normal|RUNNING|None|23:15|2:00:00|1|8|64G|gres/gpu:1|gpu01|2026-01-15T09:30:00|2026-01-15T09:36:45|5100|/home/alice/projects/vit|eval|ablation-v2
+5003|5003|N/A|alice|research|gpu|normal|PENDING|AssocGrpGRES|0:00|12:00:00|1|16|128G|gres/gpu:a100:4||2026-01-15T09:50:00|2026-01-15T22:00:00|5050|/home/alice/projects/vit|train-vit-large
+5004|5004|N/A|alice|research|gpu|normal|PENDING|Dependency|0:00|1:00:00|1|4|16G|gres/gpu:1||2026-01-15T09:51:00|N/A|5000|/home/alice/projects/vit|collect-results
+5010|5010|1|bob|physics|cpu|normal|RUNNING|None|2-01:00:00|7-00:00:00|1|32|100G|N/A|cpu01|2026-01-13T08:00:00|2026-01-13T09:00:00|4000|/home/bob/sims|md-run
+5011_[3-8]|5011|3-8|bob|physics|cpu|normal|PENDING|Priority|0:00|4:00:00|1|4|8G|N/A||2026-01-15T08:00:00|2026-01-15T12:00:00|3900|/home/bob/sims|sweep
+5011_1|5011|1|bob|physics|cpu|normal|RUNNING|None|1:00:00|4:00:00|1|4|8G|N/A|cpu01|2026-01-15T08:00:00|2026-01-15T09:00:00|3900|/home/bob/sims|sweep
+5011_2|5011|2|bob|physics|cpu|normal|RUNNING|None|1:00:00|4:00:00|1|4|8G|N/A|cpu01|2026-01-15T08:00:00|2026-01-15T09:00:00|3900|/home/bob/sims|sweep
+5020|5020|N/A|carol|vision|gpu|normal|RUNNING|None|10:00:00|2-00:00:00|2|128|1000G|gres/gpu:a100:4|gpu[01-02]|2026-01-14T23:00:00|2026-01-14T23:59:59|6000|/home/carol/llm|finetune-llm
+5021|5021|N/A|carol|vision|gpu|normal|PENDING|Resources|0:00|8:00:00|1|32|256G|gres/gpu:l40s:8||2026-01-15T09:00:00|2026-01-15T10:30:00|6100|/home/carol/llm|rlhf
+5022|5022|N/A|carol|vision|lab|normal|PENDING|ReqNodeNotAvail, UnavailableNodes:gpu05|0:00|1-00:00:00|1|16|128G|gres/gpu:h100:1||2026-01-15T09:10:00|N/A|6000|/home/carol/llm|probe
+5030|5030|N/A|dave|research|gpu|normal|COMPLETING|None|59:59|1:00:00|1|8|32G|gres/gpu:1|gpu01|2026-01-15T08:50:00|2026-01-15T09:01:00|4500|/home/dave/nlp|bert-test

@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "slurm-gui"
+version = "0.1.0"
+description = "Cross-platform desktop GUI to monitor and control any SLURM cluster over SSH"
+requires-python = ">=3.11"
+dependencies = ["PyQt6>=6.6", "asyncssh>=2.14", "pyqtgraph>=0.13"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.gui-scripts]
+slurm-gui = "slurm_gui.app:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+slurm_gui = ["assets/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

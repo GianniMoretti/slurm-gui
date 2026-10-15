@@ -1,0 +1,2 @@
+research||normal|cpu=128,gres/gpu=8,mem=1000G|gres/gpu=4|50|200|2-00:00:00
+vision|lab|normal|gres/gpu=4||||
