@@ -7,6 +7,8 @@ name = "slurm-gui"
 version = "0.1.0"
 description = "Cross-platform desktop GUI to monitor and control any SLURM cluster over SSH"
 requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
 dependencies = ["PyQt6>=6.6", "asyncssh>=2.14", "pyqtgraph>=0.13"]
 
 [project.optional-dependencies]

@@ -110,3 +110,7 @@ folder is gitignored, so a real site's data never ends up in the repository:
 - Per-profile custom commands
 - An integrated SSH terminal (deferred)
 - Packaged executables (PyInstaller) for Linux, macOS and Windows
+
+## License
+
+[MIT](LICENSE)
