@@ -14,6 +14,8 @@
 - **User state** lives only in `config/settings.py:config_dir()` (profiles.json + settings.ini as INI, never
   the registry or a plist). Use `app_settings()`, not a bare `QSettings()`.
 - **Deferred:** the integrated SSH terminal. The user decided to leave it out for now.
+- **No job submission:** the app is for viewing the state of the cluster (plus cancel/hold/release of your
+  own jobs). The user decided against a Submit page; don't propose or add one.
 - **Testing against the real cluster:** only read-only commands (squeue, sinfo, sacct, scontrol show,
   sacctmgr show, sshare). Never submit, cancel or modify jobs without the user asking. Run the GUI with
   `QT_QPA_PLATFORM=offscreen` and a temporary `XDG_CONFIG_HOME` so the user's profiles are not touched.

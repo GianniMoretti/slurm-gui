@@ -258,8 +258,6 @@ Actions tab to build without publishing.
 
 ## Roadmap
 
-- Submit page: a form for partition, account, GPUs, time and memory with a live `#SBATCH`
-  preview, saved templates, parameter sweeps and validation with `sbatch --test-only`
 - GPU use of running jobs (`nvidia-smi` through `srun --overlap`)
 - Remote file browser for logs and results
 - An integrated SSH terminal
